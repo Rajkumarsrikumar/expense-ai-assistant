@@ -33,8 +33,9 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   const isLogin = request.nextUrl.pathname === '/login';
+  const isApiRoute = request.nextUrl.pathname.startsWith('/api/');
 
-  if (!user && !isLogin && request.nextUrl.pathname !== '/') {
+  if (!user && !isLogin && request.nextUrl.pathname !== '/' && !isApiRoute) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 

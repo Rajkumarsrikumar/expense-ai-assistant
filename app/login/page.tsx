@@ -86,7 +86,14 @@ function LoginForm() {
                 setMessage('Testing...');
                 try {
                   const r = await fetch('/api/health');
-                  const j = await r.json();
+                  const text = await r.text();
+                  let j: { ok?: boolean; message?: string; error?: string };
+                  try {
+                    j = JSON.parse(text);
+                  } catch {
+                    setMessage('Health check failed: API returned non-JSON. Check if app is running.');
+                    return;
+                  }
                   setMessage(j.ok ? 'Connection OK' : j.message || j.error || JSON.stringify(j));
                 } catch (e) {
                   setMessage('Health check failed: ' + (e instanceof Error ? e.message : 'Unknown'));
