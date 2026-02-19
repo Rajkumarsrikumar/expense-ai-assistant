@@ -1,0 +1,5 @@
+{
+  "schemaVersion": "1.0",
+  "displayName": "STE Project",
+  "description": "STE Project - Team selection, Home dashboard, Item detail, Accept New Inventory. Initialize with: pac code init --displayName \"STE Project\""
+}

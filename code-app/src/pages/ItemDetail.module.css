@@ -1,0 +1,65 @@
+.container {
+  min-height: 100vh;
+  background: #fff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.backBtn {
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.backBtn:hover {
+  background: #eee;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.main {
+  padding: 2rem 1.5rem;
+}
+
+.dl {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.75rem 1.5rem;
+  max-width: 600px;
+}
+
+.dl dt {
+  margin: 0;
+  font-weight: 600;
+  color: #666;
+}
+
+.dl dd {
+  margin: 0;
+  color: #333;
+}
+
+.statusCompleted {
+  color: #107c10;
+  font-weight: 600;
+}
+
+.statusPending {
+  color: #0078d4;
+  font-weight: 600;
+}

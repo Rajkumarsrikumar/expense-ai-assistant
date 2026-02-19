@@ -1,0 +1,303 @@
+/* Match Figma wireframe: iPad Pro 11" tablet layout, dark app bar, colored KPI cards */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #fafafa;
+  max-width: 834px;
+  margin: 0 auto;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+@media (min-width: 835px) {
+  .layout {
+    min-height: 1194px;
+  }
+}
+
+.appBar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: #2d2d2d;
+  color: #fff;
+  min-height: 52px;
+}
+
+.menuBtn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.25rem;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.appBarLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: auto;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.appBarLogo svg {
+  flex-shrink: 0;
+}
+
+.appBarUser {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.875rem;
+}
+
+.userName {
+  font-weight: 600;
+}
+
+.teamName {
+  opacity: 0.9;
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.1rem;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.sideNav {
+  position: fixed;
+  left: 0;
+  top: 52px;
+  bottom: 0;
+  width: 200px;
+  background: #f0f0f0;
+  border-right: 1px solid #ddd;
+  padding: 1rem 0;
+  transition: transform 0.2s;
+}
+
+.sideNavOpen {
+  transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+  .sideNav:not(.sideNavOpen) {
+    transform: translateX(-100%);
+  }
+}
+
+.navItemActive {
+  padding: 0.5rem 1rem;
+  background: #e0e0e0;
+  font-weight: 600;
+}
+
+.main {
+  margin-left: 200px;
+  padding: 1.25rem 1.5rem;
+  min-height: calc(100vh - 52px);
+  background: #fff;
+}
+
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+  }
+}
+
+.sectionTitle {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.kpiCard {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  border-left: 4px solid transparent;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.kpiIcon {
+  font-size: 1.25rem;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.kpiCardRed {
+  border-left-color: #c00;
+  background: #fff5f5;
+}
+
+.kpiCardDark {
+  border-left-color: #2d2d2d;
+  background: #f5f5f5;
+}
+
+.kpiCardBlue {
+  border-left-color: #0078d4;
+  background: #f0f7ff;
+}
+
+.kpiCardGrey {
+  border-left-color: #6b6b6b;
+  background: #f8f8f8;
+}
+
+.kpiValue {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.kpiLabel {
+  font-size: 0.8125rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.acceptBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  background: #0078d4;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  margin-bottom: 1.25rem;
+}
+
+.acceptBtn:hover {
+  background: #106ebe;
+}
+
+.tableTitle {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.searchInput {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 220px;
+}
+
+.statusSelect {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 180px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.table th,
+.table td {
+  padding: 0.6rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.table th {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.rowClickable {
+  cursor: pointer;
+}
+
+.rowClickable:hover {
+  background: #f8f8f8;
+}
+
+.statusPending {
+  color: #0078d4;
+}
+
+.statusCompleted {
+  color: #107c10;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.paginationBtns {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.paginationBtns button {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.paginationBtns button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageNum {
+  padding: 0 0.5rem;
+  font-weight: 600;
+}

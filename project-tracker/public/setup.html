@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supabase Setup - Project Tracker</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #333; }
+    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+    h2 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    ol, ul { padding-left: 1.5rem; }
+    li { margin-bottom: 0.5rem; }
+    code { background: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.9em; }
+    pre { background: #f5f5f5; padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+    a { color: #2563eb; }
+    .step { background: #f9fafb; padding: 1rem; border-radius: 8px; margin: 1rem 0; }
+  </style>
+</head>
+<body>
+  <h1>Supabase Setup – Project Tracker</h1>
+
+  <div class="step">
+    <h2>1. Create a Supabase project</h2>
+    <ol>
+      <li>Go to <a href="https://supabase.com/dashboard" target="_blank">supabase.com/dashboard</a></li>
+      <li>Click <strong>New Project</strong></li>
+      <li>Enter name, database password, and region</li>
+      <li>Click <strong>Create new project</strong> and wait 1–2 minutes</li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <h2>2. Run the database schema</h2>
+    <ol>
+      <li>In your project, open <strong>SQL Editor</strong> (left sidebar)</li>
+      <li>Click <strong>New query</strong></li>
+      <li>Open <code>supabase/schema.sql</code> in this project folder</li>
+      <li>Copy all contents and paste into the SQL Editor</li>
+      <li>Click <strong>Run</strong> (or Ctrl+Enter)</li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <h2>3. Get your API credentials</h2>
+    <ol>
+      <li>Go to <strong>Settings</strong> → <strong>API</strong></li>
+      <li>Copy <strong>Project URL</strong></li>
+      <li>Copy <strong>anon public</strong> key</li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <h2>4. Configure the app</h2>
+    <p>Edit the <code>.env</code> file in the project root:</p>
+    <pre>VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</pre>
+    <p>Replace with your actual values. Then restart the dev server.</p>
+  </div>
+
+  <div class="step">
+    <h2>5. Create test user (optional)</h2>
+    <ol>
+      <li>Go to <strong>Authentication</strong> → <strong>Users</strong></li>
+      <li>Click <strong>Add user</strong> → <strong>Create new user</strong></li>
+      <li>Email: <code>testuser@example.com</code>, Password: <code>Test123456!</code></li>
+      <li>Enable <strong>Auto Confirm User</strong></li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <h2>6. Disable email confirmation (optional)</h2>
+    <p>For easier testing: <strong>Authentication</strong> → <strong>Providers</strong> → <strong>Email</strong> → turn off <strong>Confirm email</strong>.</p>
+  </div>
+
+  <p><a href="/">← Back to login</a></p>
+</body>
+</html>
