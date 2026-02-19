@@ -44,9 +44,9 @@ When users sign up, their email and password are stored securely in Supabase’s
 1. Go to **Authentication** → **Providers** (left sidebar)
 2. Click **Email**
 3. Ensure **Enable Email provider** is ON (this enables both magic link and password auth)
-4. For sign-up email verification:
-   - **Confirm email** – ON (recommended): users must click the link in the email before signing in
-   - **Secure email change** – ON (optional)
+4. For sign-up:
+   - **Confirm email** – **OFF** (recommended for dev): users can sign in immediately after sign-up, no email needed
+   - If ON: users must click a link in the email first (Supabase built-in email is rate-limited; use custom SMTP for production)
 5. Click **Save**
 
 ---
@@ -94,7 +94,13 @@ You can now **sign in** with email + password, **sign up** for a new account (wi
 ### "Invalid login credentials"
 - Ensure the user has signed up first (Sign Up tab).
 - If **Confirm email** is ON: the user must click the verification link in the email before signing in.
-- To skip email verification: Supabase → Authentication → Providers → Email → turn **Confirm email** OFF.
+- **Quick fix**: Supabase → Authentication → Providers → Email → turn **Confirm email** OFF. Then sign up again (or use an existing account) and sign in immediately.
+
+### No confirmation email received / Can't sign in after sign-up
+1. **Turn OFF email confirmation** (fastest fix): Supabase → Authentication → Providers → Email → set **Confirm email** to OFF → Save. New sign-ups can then sign in right away.
+2. **Already signed up but not verified?** Manually confirm the user: Supabase → Authentication → Users → find the user → click the three dots → **Confirm user**. They can then sign in.
+3. **Check spam/junk** – Supabase emails sometimes land there.
+4. **Supabase built-in email** is rate-limited (a few per hour on free tier). For reliable emails, use custom SMTP: Supabase → Project Settings → Auth → SMTP Settings.
 
 ### "Not working" / Sign in or confirmation link fails
 1. **Redirect URL**: In Supabase → Authentication → URL Configuration, add the full callback URL (e.g. `http://localhost:3002/auth/callback` or `http://localhost:3002/**`). Add all ports you might use: 3000, 3001, 3002. For production, add `https://your-domain.com/**`.

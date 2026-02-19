@@ -46,7 +46,15 @@ function LoginForm() {
       setLoading(false);
 
       if (error) {
-        setMessage(error.message);
+        const msg = error.message;
+        const isUnverified =
+          msg.toLowerCase().includes('invalid login') ||
+          msg.toLowerCase().includes('email not confirmed');
+        setMessage(
+          isUnverified
+            ? 'Sign-in blocked: email not verified. Fix: Supabase Dashboard → Authentication → Providers → Email → turn OFF "Confirm email" → Save. Then sign in again.'
+            : msg
+        );
         return;
       }
 
@@ -91,7 +99,7 @@ function LoginForm() {
       }
 
       if (data.user && !data.session) {
-        setMessage('Check your email to verify your account. Then sign in.');
+        setMessage('Check your email to verify your account. If you don\'t receive it, check spam or turn off "Confirm email" in Supabase Dashboard → Auth → Providers → Email.');
         setMode('signin');
       } else if (data.session) {
         window.location.href = '/';
@@ -107,6 +115,9 @@ function LoginForm() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
+        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+          <strong>Not getting verification emails?</strong> Supabase Dashboard → Authentication → Providers → Email → turn <strong>OFF</strong> &quot;Confirm email&quot; → Save. Then sign up and sign in without verification.
+        </div>
         <h1 className="mb-2 text-2xl font-bold text-slate-900">
           Expense AI Assistant
         </h1>
@@ -215,7 +226,7 @@ function LoginForm() {
 
         {mode === 'signup' && (
           <p className="mt-4 text-center text-xs text-slate-500">
-            By signing up, you agree to verify your email. You&apos;ll receive a confirmation link.
+            If email confirmation is enabled in Supabase, you&apos;ll receive a verification link. Otherwise you can sign in immediately.
           </p>
         )}
       </div>
