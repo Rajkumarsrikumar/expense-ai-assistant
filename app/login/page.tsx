@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 
 function LoginForm() {
   const searchParams = useSearchParams();
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+  const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -110,7 +110,36 @@ function LoginForm() {
     }
   };
 
-  const handleSubmit = mode === 'signin' ? handleSignIn : handleSignUp;
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const supabase = createClient();
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo,
+      });
+
+      setLoading(false);
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      setMessage('Check your email for a password reset link. If you don\'t see it, check spam.');
+    } catch (err) {
+      setLoading(false);
+      setMessage(err instanceof Error ? err.message : 'Failed to send reset email');
+    }
+  };
+
+  const handleSubmit =
+    mode === 'signin' ? handleSignIn : mode === 'signup' ? handleSignUp : handleForgotPassword;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
@@ -122,7 +151,9 @@ function LoginForm() {
           Expense AI Assistant
         </h1>
         <p className="mb-6 text-slate-600">
-          {mode === 'signin' ? 'Sign in to your account' : 'Create a new account'}
+          {mode === 'signin' && 'Sign in to your account'}
+          {mode === 'signup' && 'Create a new account'}
+          {mode === 'forgot' && 'Enter your email to receive a password reset link'}
         </p>
 
         <div className="mb-6 flex rounded-lg bg-slate-100 p-1">
@@ -168,24 +199,26 @@ function LoginForm() {
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              minLength={6}
-              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            />
-            {mode === 'signup' && (
-              <p className="mt-1 text-xs text-slate-500">At least 6 characters</p>
-            )}
-          </div>
+          {mode !== 'forgot' && (
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                minLength={6}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              />
+              {mode === 'signup' && (
+                <p className="mt-1 text-xs text-slate-500">At least 6 characters</p>
+              )}
+            </div>
+          )}
 
           {mode === 'signup' && (
             <div>
@@ -220,9 +253,50 @@ function LoginForm() {
             disabled={loading}
             className="w-full rounded-md bg-primary-600 px-4 py-2 font-medium text-white hover:bg-primary-700 disabled:opacity-50"
           >
-            {loading ? 'Please wait...' : mode === 'signin' ? 'Sign In' : 'Sign Up'}
+            {loading
+              ? 'Please wait...'
+              : mode === 'signin'
+                ? 'Sign In'
+                : mode === 'signup'
+                  ? 'Sign Up'
+                  : 'Send reset link'}
           </button>
         </form>
+
+        {mode === 'signin' && (
+          <p className="mt-3 text-center">
+            <button
+              type="button"
+              onClick={() => {
+                setMode('forgot');
+                setMessage('');
+              }}
+              className="text-sm text-primary-600 hover:text-primary-700 hover:underline"
+            >
+              Forgot password?
+            </button>
+          </p>
+        )}
+
+        {mode === 'forgot' && (
+          <>
+            <p className="mt-3 text-center text-xs text-slate-500">
+              Passwords are encrypted and cannot be emailed. Use the reset link to set a new one.
+            </p>
+            <p className="mt-2 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('signin');
+                  setMessage('');
+                }}
+                className="text-sm text-slate-600 hover:text-slate-800 hover:underline"
+              >
+                Back to sign in
+              </button>
+            </p>
+          </>
+        )}
 
         {mode === 'signup' && (
           <p className="mt-4 text-center text-xs text-slate-500">

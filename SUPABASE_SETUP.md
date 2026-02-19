@@ -60,8 +60,10 @@ When users sign up, their email and password are stored securely in Supabase’s
    - `http://localhost:3001/**`
    - `http://localhost:3002/**`
    - `https://expense-ai-assistant-4h8d.vercel.app/**` (if deployed)
-4. The auth callback is `/auth/callback` – confirmation links will redirect there
+4. The auth callback is `/auth/callback` – confirmation and password reset links redirect there
 5. Click **Save**
+
+**Note:** Passwords are encrypted and cannot be emailed. Use **Forgot password?** on the login page to receive a reset link instead.
 
 ---
 

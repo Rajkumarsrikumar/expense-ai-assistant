@@ -32,13 +32,14 @@ export default async function HomePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const displayName = user?.email?.split('@')[0] ?? 'there';
+  const displayName = user?.email?.split('@')[0];
+  const greeting = displayName ? `Welcome back, ${displayName}` : 'Welcome';
 
   return (
     <div>
       <div className="mb-10">
         <h1 className="mb-2 text-3xl font-bold text-slate-900">
-          Welcome back, {displayName}
+          {greeting}
         </h1>
         <p className="text-slate-600">
           Your expense tracking hub. Choose where to go next.

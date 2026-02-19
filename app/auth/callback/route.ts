@@ -45,7 +45,7 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL(`/login?error=auth&details=${errMsg}`, requestUrl.origin));
   }
 
-  if (tokenHash && type === 'email') {
+  if (tokenHash && (type === 'email' || type === 'recovery')) {
     const cookieStore = await cookies();
 
     const supabase = createServerClient(
@@ -71,10 +71,13 @@ export async function GET(request: Request) {
 
     const { error } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
-      type: 'email',
+      type: type as 'email' | 'recovery',
     });
 
     if (!error) {
+      if (type === 'recovery') {
+        return NextResponse.redirect(new URL('/reset-password', requestUrl.origin));
+      }
       return NextResponse.redirect(new URL('/login?confirmed=true', requestUrl.origin));
     }
 
