@@ -37,11 +37,13 @@ Follow these steps in order. Your `.env.local` is already configured with your k
 
 ---
 
-## Step 4: Enable Email/Password Auth
+## Step 4: Enable Email/Password Auth (stores credentials in Supabase)
+
+When users sign up, their email and password are stored securely in Supabase’s `auth.users` table. Sign-in uses these stored credentials.
 
 1. Go to **Authentication** → **Providers** (left sidebar)
 2. Click **Email**
-3. Ensure **Enable Email provider** is ON
+3. Ensure **Enable Email provider** is ON (this enables both magic link and password auth)
 4. For sign-up email verification:
    - **Confirm email** – ON (recommended): users must click the link in the email before signing in
    - **Secure email change** – ON (optional)
@@ -88,6 +90,11 @@ You can now **sign in** with email + password, **sign up** for a new account (wi
 ---
 
 ## Troubleshooting
+
+### "Invalid login credentials"
+- Ensure the user has signed up first (Sign Up tab).
+- If **Confirm email** is ON: the user must click the verification link in the email before signing in.
+- To skip email verification: Supabase → Authentication → Providers → Email → turn **Confirm email** OFF.
 
 ### "Not working" / Sign in or confirmation link fails
 1. **Redirect URL**: In Supabase → Authentication → URL Configuration, add the full callback URL (e.g. `http://localhost:3002/auth/callback` or `http://localhost:3002/**`). Add all ports you might use: 3000, 3001, 3002. For production, add `https://your-domain.com/**`.
