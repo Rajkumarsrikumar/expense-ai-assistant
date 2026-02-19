@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code');
   const tokenHash = requestUrl.searchParams.get('token_hash');
   const type = requestUrl.searchParams.get('type');
-  const next = requestUrl.searchParams.get('next') ?? '/dashboard';
+  const next = requestUrl.searchParams.get('next') ?? '/';
 
   if (code) {
     const cookieStore = await cookies();

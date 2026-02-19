@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 const navItems = [
+  { href: '/', label: 'Home' },
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/upload', label: 'Upload' },
   { href: '/expenses', label: 'Expenses' },
@@ -26,7 +27,7 @@ export default function Nav() {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
             <Link
-              href="/dashboard"
+              href="/"
               className="text-xl font-bold text-primary-400 hover:text-primary-300"
             >
               Expense AI

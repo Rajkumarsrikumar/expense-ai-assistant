@@ -50,7 +50,7 @@ function LoginForm() {
         return;
       }
 
-      window.location.href = '/dashboard';
+      window.location.href = '/';
     } catch (err) {
       setLoading(false);
       setMessage(err instanceof Error ? err.message : 'Sign in failed');
@@ -94,7 +94,7 @@ function LoginForm() {
         setMessage('Check your email to verify your account. Then sign in.');
         setMode('signin');
       } else if (data.session) {
-        window.location.href = '/dashboard';
+        window.location.href = '/';
       }
     } catch (err) {
       setLoading(false);
