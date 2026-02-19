@@ -6,29 +6,70 @@ import { useSearchParams } from 'next/navigation';
 
 function LoginForm() {
   const searchParams = useSearchParams();
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [origin, setOrigin] = useState('');
 
   useEffect(() => {
-    setOrigin(window.location.origin);
     const err = searchParams.get('error');
     const details = searchParams.get('details');
-    if (err === 'auth') {
-      let msg = details ? decodeURIComponent(details) : 'Sign-in failed. Make sure the redirect URL is added in Supabase.';
+    const confirmed = searchParams.get('confirmed');
+    if (confirmed === 'true') {
+      setMessage('Email verified! You can now sign in.');
+      setMode('signin');
+    } else if (err === 'auth') {
+      let msg = details ? decodeURIComponent(details) : 'Authentication failed.';
       if (msg.includes('pkce') || msg.includes('code_verifier')) {
-        msg = 'Click the magic link in the SAME browser where you requested it. Do not open the email link in a different browser or device.';
-      } else if (msg.includes('Invalid') || msg.includes('invalid')) {
-        msg = `${msg} — Check that your Supabase URL and keys are from the SAME project (Dashboard → Project Settings → API).`;
+        msg = 'Click the link in the SAME browser where you requested it.';
       }
       setMessage(msg);
     }
   }, [searchParams]);
 
-  const handleMagicLink = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || !password) return;
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      setLoading(false);
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      window.location.href = '/dashboard';
+    } catch (err) {
+      setLoading(false);
+      setMessage(err instanceof Error ? err.message : 'Sign in failed');
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !password) return;
+
+    if (password.length < 6) {
+      setMessage('Password must be at least 6 characters.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setMessage('Passwords do not match.');
+      return;
+    }
 
     setLoading(true);
     setMessage('');
@@ -36,35 +77,32 @@ function LoginForm() {
     try {
       const supabase = createClient();
       const redirectTo = `${window.location.origin}/auth/callback`;
-      const { error } = await supabase.auth.signInWithOtp({
+      const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
+        password,
         options: { emailRedirectTo: redirectTo },
       });
 
       setLoading(false);
 
       if (error) {
-        let msg = error.message;
-        if (msg.toLowerCase().includes('fetch') || msg.toLowerCase().includes('network')) {
-          msg = 'Network error. Check: 1) Supabase project not paused (Dashboard), 2) Correct URL in .env.local, 3) Try incognito or disable CORS/Ad blockers.';
-        }
-        setMessage(msg);
+        setMessage(error.message);
         return;
       }
 
-      setMessage('Check your email for the magic link!');
+      if (data.user && !data.session) {
+        setMessage('Check your email to verify your account. Then sign in.');
+        setMode('signin');
+      } else if (data.session) {
+        window.location.href = '/dashboard';
+      }
     } catch (err) {
       setLoading(false);
-      const msg = err instanceof Error ? err.message : 'Request failed';
-      if (msg.toLowerCase().includes('fetch') || msg.toLowerCase().includes('network')) {
-        setMessage(
-          'Failed to fetch. Try: 1) Restore paused Supabase project in Dashboard, 2) Verify URL & keys in .env.local match same project, 3) Disable browser extensions (CORS/Ad block), 4) Try incognito mode.'
-        );
-      } else {
-        setMessage(msg);
-      }
+      setMessage(err instanceof Error ? err.message : 'Sign up failed');
     }
   };
+
+  const handleSubmit = mode === 'signin' ? handleSignIn : handleSignUp;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
@@ -73,45 +111,39 @@ function LoginForm() {
           Expense AI Assistant
         </h1>
         <p className="mb-6 text-slate-600">
-          Sign in with your email to get started.
+          {mode === 'signin' ? 'Sign in to your account' : 'Create a new account'}
         </p>
-        {origin && (
-          <div className="mb-4 space-y-2">
-            <p className="rounded bg-slate-100 px-3 py-2 text-xs text-slate-500">
-              Add <code className="font-mono">{origin}/**</code> to Supabase Redirect URLs
-            </p>
-            <button
-              type="button"
-              onClick={async () => {
-                setMessage('Testing...');
-                try {
-                  const r = await fetch('/api/health');
-                  const text = await r.text();
-                  let j: { ok?: boolean; message?: string; error?: string };
-                  try {
-                    j = JSON.parse(text);
-                  } catch {
-                    setMessage('Health check failed: API returned non-JSON. Check if app is running.');
-                    return;
-                  }
-                  setMessage(j.ok ? 'Connection OK' : j.message || j.error || JSON.stringify(j));
-                } catch (e) {
-                  setMessage('Health check failed: ' + (e instanceof Error ? e.message : 'Unknown'));
-                }
-              }}
-              className="text-xs text-primary-600 hover:underline"
-            >
-              Test Supabase connection
-            </button>
-          </div>
-        )}
 
-        <form onSubmit={handleMagicLink} className="space-y-4">
+        <div className="mb-6 flex rounded-lg bg-slate-100 p-1">
+          <button
+            type="button"
+            onClick={() => {
+              setMode('signin');
+              setMessage('');
+            }}
+            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+              mode === 'signin' ? 'bg-white text-slate-900 shadow' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Sign In
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setMode('signup');
+              setMessage('');
+            }}
+            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+              mode === 'signup' ? 'bg-white text-slate-900 shadow' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-slate-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-slate-700">
               Email
             </label>
             <input
@@ -125,10 +157,47 @@ function LoginForm() {
             />
           </div>
 
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              minLength={6}
+              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            />
+            {mode === 'signup' && (
+              <p className="mt-1 text-xs text-slate-500">At least 6 characters</p>
+            )}
+          </div>
+
+          {mode === 'signup' && (
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700">
+                Confirm Password
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                required={mode === 'signup'}
+                minLength={6}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              />
+            </div>
+          )}
+
           {message && (
             <p
               className={`text-sm ${
-                message.includes('Check') ? 'text-green-600' : 'text-red-600'
+                message.includes('Check') || message.includes('verified') ? 'text-green-600' : 'text-red-600'
               }`}
             >
               {message}
@@ -140,9 +209,15 @@ function LoginForm() {
             disabled={loading}
             className="w-full rounded-md bg-primary-600 px-4 py-2 font-medium text-white hover:bg-primary-700 disabled:opacity-50"
           >
-            {loading ? 'Sending...' : 'Send magic link'}
+            {loading ? 'Please wait...' : mode === 'signin' ? 'Sign In' : 'Sign Up'}
           </button>
         </form>
+
+        {mode === 'signup' && (
+          <p className="mt-4 text-center text-xs text-slate-500">
+            By signing up, you agree to verify your email. You&apos;ll receive a confirmation link.
+          </p>
+        )}
       </div>
     </div>
   );

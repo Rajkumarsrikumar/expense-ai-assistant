@@ -37,19 +37,33 @@ Follow these steps in order. Your `.env.local` is already configured with your k
 
 ---
 
-## Step 4: Add Redirect URLs (for magic link login)
+## Step 4: Enable Email/Password Auth
+
+1. Go to **Authentication** → **Providers** (left sidebar)
+2. Click **Email**
+3. Ensure **Enable Email provider** is ON
+4. For sign-up email verification:
+   - **Confirm email** – ON (recommended): users must click the link in the email before signing in
+   - **Secure email change** – ON (optional)
+5. Click **Save**
+
+---
+
+## Step 5: Add Redirect URLs (for login & sign-up confirmation)
 
 1. Go to **Authentication** → **URL Configuration** (left sidebar)
-2. Set **Site URL** to `http://localhost:3000` (or your dev port)
+2. Set **Site URL** to `http://localhost:3000` (or your dev/production URL)
 3. Under **Redirect URLs**, add ALL of these (the app may run on different ports):
    - `http://localhost:3000/**`
    - `http://localhost:3001/**`
    - `http://localhost:3002/**`
-4. Click **Save**
+   - `https://expense-ai-assistant-4h8d.vercel.app/**` (if deployed)
+4. The auth callback is `/auth/callback` – confirmation links will redirect there
+5. Click **Save**
 
 ---
 
-## Step 5: Seed FX Rates (optional, for currency conversion)
+## Step 6: Seed FX Rates (optional, for currency conversion)
 
 After the app is running, open in browser or run in terminal:
 
@@ -69,14 +83,14 @@ curl -X POST http://localhost:3000/api/fx/sync
 
 Restart the dev server (`npm run dev`) and open **http://localhost:3000** (or the port shown if 3000 is in use)
 
-You can now sign in with email (magic link), upload receipts, and use the app.
+You can now **sign in** with email + password, **sign up** for a new account (with email verification), upload receipts, and use the app.
 
 ---
 
 ## Troubleshooting
 
-### "Not working" / Magic link doesn't sign you in
-1. **Redirect URL**: In Supabase → Authentication → URL Configuration, add the URL shown on the login page (e.g. `http://localhost:3002/**`). Add all ports you might use: 3000, 3001, 3002.
+### "Not working" / Sign in or confirmation link fails
+1. **Redirect URL**: In Supabase → Authentication → URL Configuration, add the full callback URL (e.g. `http://localhost:3002/auth/callback` or `http://localhost:3002/**`). Add all ports you might use: 3000, 3001, 3002. For production, add `https://your-domain.com/**`.
 2. **URL and keys must match**: Your `NEXT_PUBLIC_SUPABASE_URL` must be from the **same project** as your publishable/secret keys. In Supabase Dashboard → Project Settings → API, copy the **Project URL** and ensure it matches `.env.local`.
 3. **Test connection**: Visit `http://localhost:3000/api/health` (or your port) to verify Supabase is reachable.
 
